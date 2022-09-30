@@ -85,8 +85,8 @@ public class InvoiceService : IInvoiceService
             return new DeleteInvoiceResponse
             {
                 Success = false,
-                Error = "Task not found",
-                ErrorCode = "T01"
+                Error = "Invoice not found",
+                ErrorCode = "I01"
             };
         }
 
@@ -95,8 +95,8 @@ public class InvoiceService : IInvoiceService
             return new DeleteInvoiceResponse
             {
                 Success = false,
-                Error = "You don't have access to delete this task",
-                ErrorCode = "T02"
+                Error = "You don't have access to delete this invoice",
+                ErrorCode = "I02"
             };
         }
 
@@ -117,7 +117,7 @@ public class InvoiceService : IInvoiceService
         {
             Success = false,
             Error = "Unable to delete invoice",
-            ErrorCode = "T03"
+            ErrorCode = "I03"
         };
     }
 
