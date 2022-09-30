@@ -21,7 +21,7 @@
 
 ### Running Client project
 
-1. Navigate to `InvoicingApp.Client` directory
+1. Navigate to `Client` directory
 2. Execute `npm install`
 3. Execute `npm start`
 4. When finished in console you should see running client app link `localhost:4200`
