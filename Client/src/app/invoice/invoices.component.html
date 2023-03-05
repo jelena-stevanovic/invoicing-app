@@ -1,0 +1,254 @@
+<ng-template #loading>Loading...</ng-template>
+
+<div class="container mt-3" *ngIf="invoice$ | async as invoice; else loading">
+  <div class="row mt-2 justify-content-center">
+    <h2>Invoice Details</h2>
+  </div>
+
+  <form #ngSignup="ngForm" name="form" (ngSubmit)="saveInvoice(invoice)" novalidate>
+
+    <div class="row mt-1 mb-3">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-8">
+        <div class="card card-container p-3">
+          <div class="form-group">
+            <label for="partner">Partner</label>
+            <input type="text" class="form-control" name="partner" [(ngModel)]="invoice.partner" partner
+                   #partner="ngModel" />
+            <div class="alert-danger" *ngIf="ngSignup.submitted && partner.errors">
+              <div *ngIf="partner.errors['partner']">Invalid Partner</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rebatePercentage">Rebate Percentage</label>
+            <input type="text" class="form-control" name="rebatePercentage" disabled
+                   [(ngModel)]="invoice.rebatePercentage"
+                   rebatePercentage
+                   #rebatePercentage="ngModel" />
+            <div class="alert-danger" *ngIf="ngSignup.submitted && rebatePercentage.errors">
+              <div *ngIf="rebatePercentage.errors['rebatePercentage']">Invalid Rebate Percentage</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="date">Creation Date</label>
+            <input type="text" class="form-control" name="date" [(ngModel)]="invoice.date"
+                   disabled
+                   date
+                   #date="ngModel" />
+            <div class="alert-danger" *ngIf="ngSignup.submitted && date.errors">
+              <div *ngIf="date.errors['date']">Invalid date</div>
+            </div>
+          </div>
+
+          <div class="list-group mt-2 ">
+            <div class="d-flex justify-content-between pt-3">
+              <div class="form-group mr-2">
+                <label for="noTaxAmount">No Tax</label>
+                <input type="text" class="form-control" name="noTaxAmount" disabled [(ngModel)]="invoice.noTaxAmount"
+                       noTaxAmount
+                       #noTaxAmount="ngModel" />
+                <div class="alert-danger" *ngIf="ngSignup.submitted && noTaxAmount.errors">
+                  <div *ngIf="noTaxAmount.errors['noTaxAmount']">Invalid noTaxAmount</div>
+                </div>
+              </div>
+
+              <div class="form-group mr-2">
+                <label for="rebateAmount">Rebate</label>
+                <input type="text" class="form-control" name="rebateAmount" disabled [(ngModel)]="invoice.rebateAmount"
+                       rebateAmount
+                       #rebateAmount="ngModel" />
+                <div class="alert-danger" *ngIf="ngSignup.submitted && rebateAmount.errors">
+                  <div *ngIf="rebateAmount.errors['rebateAmount']">Invalid</div>
+                </div>
+              </div>
+
+              <div class="form-group mr-2">
+                <label for="noTaxRebateAmount">No Tax Rebate</label>
+                <input type="text" class="form-control" name="noTaxRebateAmount" disabled
+                       [(ngModel)]="invoice.noTaxRebateAmount"
+                       noTaxRebateAmount
+                       #noTaxRebateAmount="ngModel" />
+                <div class="alert-danger" *ngIf="ngSignup.submitted && noTaxRebateAmount.errors">
+                  <div *ngIf="noTaxRebateAmount.errors['noTaxRebateAmount']">Invalid</div>
+                </div>
+              </div>
+
+              <div class="form-group mr-2">
+                <label for="tax">Tax</label>
+                <input type="text" class="form-control" name="tax" [(ngModel)]="invoice.tax" disabled tax
+                       #tax="ngModel" />
+                <div class="alert-danger" *ngIf="ngSignup.submitted && tax.errors">
+                  <div *ngIf="tax.errors['tax']">Invalid</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="total">Total</label>
+                <input type="text" class="form-control" name="total" [(ngModel)]="invoice.totalAmount" disabled total
+                       #total="ngModel" />
+                <div class="alert-danger" *ngIf="ngSignup.submitted && total.errors">
+                  <div *ngIf="total.errors['total']">Invalid</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-2"></div>
+    </div>
+
+    <div class="row mt-2 justify-content-center">
+      <h2>Items</h2>
+    </div>
+
+    <div class="row mt-1 mb-3">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-8">
+        <div class="card card-container pt-3 pl-3 pr-3">
+          <div class="list-group mt-2 ">
+            <div class="d-flex justify-content-between">
+              <div class="form-group mr-2">
+                <label for="itemName">Name</label>
+                <input type="text" class="form-control" [(ngModel)]="newInvoiceItem.articleName" name="articleName"/>
+              </div>
+              <div class="form-group mr-2">
+                <label for="itemPrice">Price</label>
+                <input type="text" class="form-control" name="itemPrice" (change)="this.recalculateItem(newInvoiceItem)"
+                       [(ngModel)]="newInvoiceItem.price" itemPrice
+                       #itemPrice="ngModel"/>
+                <div class="alert-danger" *ngIf="ngSignup.submitted && itemPrice.errors">
+                  <div *ngIf="itemPrice.errors['itemPrice']">Invalid Price</div>
+                </div>
+              </div>
+              <div class="form-group mr-2">
+                <label for="quantity">Quantity</label>
+                <input type="text" class="form-control" name="quantity" (change)="this.recalculateItem(newInvoiceItem)"
+                       [(ngModel)]="newInvoiceItem.quantity" quantity
+                       #quantity="ngModel"/>
+                <div class="alert-danger" *ngIf="ngSignup.submitted && quantity.errors">
+                  <div *ngIf="quantity.errors['quantity']">Invalid Quantity</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="itemRebatePercentage">Rebate Percentage</label>
+                <input type="text" class="form-control" name="itemRebatePercentage"
+                       [(ngModel)]="newInvoiceItem.rebatePercentage"
+                       (change)="this.recalculateItem(newInvoiceItem)"
+                       itemRebatePercentage
+                       #itemRebatePercentage="ngModel"/>
+                <div class="alert-danger" *ngIf="ngSignup.submitted && itemRebatePercentage.errors">
+                  <div *ngIf="itemRebatePercentage.errors['itemRebatePercentage']">Invalid Rebate Percentage</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="list-group">
+              <div class="d-flex justify-content-between">
+                <div class="form-group mr-2">
+                  <label for="itemNoTaxAmount">No Tax</label>
+                  <input type="text" class="form-control" name="itemNoTaxAmount" disabled
+                         [(ngModel)]="newInvoiceItem.noTaxAmount"
+                         itemNoTaxAmount
+                         #itemNoTaxAmount="ngModel"/>
+                  <div class="alert-danger" *ngIf="ngSignup.submitted && itemNoTaxAmount.errors">
+                    <div *ngIf="itemNoTaxAmount.errors['itemNoTaxAmount']">Invalid</div>
+                  </div>
+                </div>
+
+                <div class="form-group mr-2">
+                  <label for="itemRebateAmount">itemRebate</label>
+                  <input type="text" class="form-control" name="itemRebateAmount" disabled
+                         [(ngModel)]="newInvoiceItem.rebateAmount"
+                         itemRebateAmount
+                         #itemRebateAmount="ngModel"/>
+                  <div class="alert-danger" *ngIf="ngSignup.submitted && itemRebateAmount.errors">
+                    <div *ngIf="itemRebateAmount.errors['itemRebateAmount']">Invalid</div>
+                  </div>
+                </div>
+
+                <div class="form-group mr-2">
+                  <label for="itemNoTaxRebateAmount">No Tax Rebate</label>
+                  <input type="text" class="form-control" name="itemNoTaxRebateAmount" disabled
+                         [(ngModel)]="newInvoiceItem.noTaxRebateAmount"
+                         itemNoTaxRebateAmount
+                         #itemNoTaxRebateAmount="ngModel"/>
+                  <div class="alert-danger" *ngIf="ngSignup.submitted && itemNoTaxRebateAmount.errors">
+                    <div *ngIf="itemNoTaxRebateAmount.errors['itemNoTaxRebateAmount']">Invalid</div>
+                  </div>
+                </div>
+
+                <div class="form-group mr-2">
+                  <label for="itemTax">Tax</label>
+                  <input type="text" class="form-control" name="itemTax" [(ngModel)]="newInvoiceItem.tax" disabled
+                         itemTax
+                         #itemTax="ngModel"/>
+                  <div class="alert-danger" *ngIf="ngSignup.submitted && itemTax.errors">
+                    <div *ngIf="itemTax.errors['itemTax']">Invalid</div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="itemTotal">Total</label>
+                  <input type="text" class="form-control" name="itemTotal" [(ngModel)]="newInvoiceItem.totalAmount"
+                         disabled itemTotal
+                         #itemTotal="ngModel"/>
+                  <div class="alert-danger" *ngIf="ngSignup.submitted && itemTotal.errors">
+                    <div *ngIf="itemTotal.errors['itemTotal']">Invalid</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="form-control btn btn-info" (click)="addInvoiceItem(invoice, $event)">Add Item</button>
+      </div>
+      <div class="col-sm-2">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-8">
+        <div class="list-group mt-2" *ngFor="let item of invoice.items">
+          <a role="button" (click)="updateInvoice(invoice)" class="list-group-item list-group-item-action" >
+            <div class="row">
+              <h5 class="col-sm-4 mb-1">{{ item.articleName }}</h5>
+              <div class="col-sm-8">
+                <div class="d-flex justify-content-end">
+                  <small class="mr-3">Price: {{ item.price }}</small>
+                  <small class="mr-3">Quantity: {{ item.quantity }}</small>
+                  <small class="mr-3">No Tax: {{ item.noTaxAmount }}</small>
+                  <small>Rebate: {{ item.rebateAmount }}</small>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <small class="mr-3">No Tax Rebate: {{ item.noTaxRebateAmount }}</small>
+                  <small class="mr-3">Rebate Percentage: {{ item.rebatePercentage }} %</small>
+                  <small class="mr-3">Tax: {{ item.tax }}</small>
+                  <small>Total: {{ item.totalAmount }}</small>
+                </div>
+              </div>
+            </div>
+
+          </a>
+          <button class="btn btn-danger" (click)="removeInvoiceItem(invoice, item)">Remove</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row mt-5 mb-3 justify-content-center align-items-center">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-8">
+        <div class="form-group">
+          <input type="submit" class="form-control btn btn-success" value="Save Invoice">
+        </div>
+      </div>
+      <div class="col-sm-2"></div>
+    </div>
+
+  </form>
+</div>
